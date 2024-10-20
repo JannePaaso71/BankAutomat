@@ -1,0 +1,33 @@
+// Login card
+POST {{serverHost}}/login/login_card
+Content-Type: application/json
+
+{
+  "id": {{test_card_id}},
+  "pin": "1234"
+}
+> {%
+    client.global.set("client_token", response.body.access_token);
+%}
+
+###
+GET {{serverHost}}/atm/account/query_accounts
+Authorization: Bearer {{client_token}}
+
+###
+GET {{serverHost}}/atm/account/check_balance/{{credit_or_debit}}
+Authorization: Bearer {{client_token}}
+
+###
+POST {{serverHost}}/atm/account/withdrawal
+Authorization: Bearer {{client_token}}
+Content-Type: application/json
+
+{
+  "accountType": "credit",
+  "amount": 300
+}
+
+###
+GET {{serverHost}}/atm/transactions/debit/1
+Authorization: Bearer {{client_token}}

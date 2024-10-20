@@ -1,0 +1,75 @@
+###
+// Login operator
+POST {{serverHost}}/login/login_operator
+Content-Type: application/json
+
+{
+  "id": "nimda",
+  "pin": "1234"
+}
+> {%
+    client.global.set("operator_token", response.body.access_token);
+%}
+
+###
+# Create card.
+POST {{serverHost}}/teller/card
+Authorization: Bearer {{operator_token}}
+Content-Type: application/json
+
+{
+  "pin": "salis",
+  "account_ids": {
+    "first": 1,
+    "second": 2
+  },
+  "owner_id": 2
+}
+
+###
+# Update card.
+PUT {{serverHost}}/teller/card/1
+Authorization: Bearer {{operator_token}}
+Content-Type: application/json
+
+{
+  "pin": "1234",
+  "account_ids": {
+    "first": 1
+  },
+  "owner_id": 1
+}
+
+###
+# Get card.
+GET {{serverHost}}/teller/card/2
+Authorization: Bearer {{operator_token}}
+Accept: application/json
+
+
+###
+DELETE {{serverHost}}/teller/card/20
+Authorization: Bearer {{operator_token}}
+
+
+###
+POST {{serverHost}}/teller/customer/
+Authorization: Bearer {{operator_token}}
+Content-Type: application/json
+
+{
+  "firstname": "Matti",
+  "lastname": "Markkanen"
+}
+
+###
+GET {{serverHost}}/teller/customer/1
+Authorization: Bearer {{operator_token}}
+
+### TODO Broken.
+GET {{serverHost}}/teller/customer/_by_name/Matti/Markkanen
+Authorization: Bearer {{operator_token}}
+
+###
+DELETE {{serverHost}}/teller/customer/1
+Authorization: Bearer {{operator_token}}

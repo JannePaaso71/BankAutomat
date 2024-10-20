@@ -1,0 +1,51 @@
+
+services:
+
+  backend:
+    build: backend
+    environment:
+      - DATABASE=ATM
+      - DATABASE_HOST=database
+      - DATABASE_PORT=3306
+      - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - DATABASE_USERNAME=${MYSQL_USER}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    depends_on:
+      - database
+    ports:
+      - "3000:3000"
+    command: nodemon bin/www 0.0.0.0 8000
+    volumes:
+      - "./backend:/app"
+      - "/app/node_modules"
+      # - "node_libraries:/app/node_modules"
+    networks:
+      - atm
+
+  database:
+    build: ./mysql
+    container_name: database
+    environment:
+      - MYSQL_DATABASE=ATM
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+    volumes:
+      - atm2:/var/lib/mysql
+    networks:
+      - atm
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - atm
+
+networks:
+  atm:
+
+volumes:
+  atm2:
+  # node_libraries:
